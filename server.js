@@ -1,11 +1,11 @@
 import {ApolloServer} from 'apollo-server';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 
 import typeDefs from './typeDefs';
 import resolvers from './resolvers';
 
-dotenv.config();
+// dotenv.config();
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true })
     .then(() => console.log('DB connected!'))

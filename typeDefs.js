@@ -8,6 +8,24 @@ const typeDefs = gql`
         picture: String
     }
     
+    type Comment {
+        text: String
+        createdAt: String
+        author: User    
+    }
+    
+    type Pin {
+        _id: ID
+        createdAt: String
+        title: String
+        content: String
+        image: String
+        latitude: Float
+        longitude: Float
+        author: User
+        comments: [Comment]    
+    }
+    
     type Query {
         me: User
     }

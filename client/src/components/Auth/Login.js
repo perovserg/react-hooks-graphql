@@ -32,6 +32,8 @@ const Login = ({ classes }) => {
         payload: me,
       });
 
+      dispatch({ type: 'IS_LOGGED_IN', payload: googleUser.isSignedIn() });
+
     } catch (error) {
       onFailure(error);
     }
@@ -58,6 +60,7 @@ const Login = ({ classes }) => {
             onFailure={onFailure}
             clientId={config.OAUTH_GOOGLE_API_CLIENT_ID}
             isSignedIn={true}
+            buttonText="Login with Google!"
             theme="dark"
         />
       </div>

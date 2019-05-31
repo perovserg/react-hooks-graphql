@@ -1,11 +1,13 @@
 // тут используем useState хук
 
-import React, { useState } from "react";
-import ReactMapGL, { NavigationControl } from 'react-map-gl';
+import React, { useState, useEffect } from "react";
+import ReactMapGL, { NavigationControl, Marker } from 'react-map-gl';
 import { withStyles } from "@material-ui/core/styles";
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
 // import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+
+import PinIcon from './PinIcon';
 
 import config from '../config';
 
@@ -19,9 +21,48 @@ const Map = ({ classes }) => {
 
   const [viewport, setViewport] = useState(initialViewport);
 
+  const [userPosition, setUserPosition] = useState(null);
+
+  useEffect(() => {
+    getUserPosition();
+  }, []);
+
+  const getUserPosition = () => {
+
+    // норм проверка свойства объекта
+    if ('geolocation' in navigator) {
+
+      navigator.geolocation.getCurrentPosition(
+          position => {
+
+            console.log('callback => navigator.geolocation.getCurrentPosition', position);
+            const {latitude, longitude} = position.coords;
+            setViewport({...viewport, latitude, longitude});
+            setUserPosition({latitude, longitude});
+
+          },
+          error => console.error('Error => navigator.geolocation.getCurrentPosition', error),
+          {enableHighAccuracy: true}
+      );
+    }
+  };
+
+  const handleMapClick = (event) => {
+    const { lngLat, leftButton } = event;
+
+    if (!leftButton) return;
+
+
+
+  };
+
+  console.log('viewport', {...viewport});
+  console.log('userPosition', {...userPosition});
+
   return (
       <div className={classes.root}>
         <ReactMapGL
+          onClick={handleMapClick}
           width="100vw"
           height="calc(100vh - 64px)"
           mapStyle="mapbox://styles/mapbox/streets-v9"
@@ -35,6 +76,20 @@ const Map = ({ classes }) => {
                 onViewportChange={newViewport => setViewport(newViewport)}
             />
           </div>
+
+          {/*Pin for User's Current Position*/}
+
+          {userPosition && (
+            <Marker
+                latitude={userPosition.latitude}
+                longitude={userPosition.longitude}
+                offsetLeft={-19}
+                offsetTop={-37}
+            >
+              <PinIcon size={40} color="red" />
+            </Marker>
+          )}
+
         </ReactMapGL>
       </div>
   );

@@ -1,7 +1,7 @@
 // тут используем useState хук
 
 import React, { useState } from "react";
-import ReactMapGL from 'react-map-gl';
+import ReactMapGL, { NavigationControl } from 'react-map-gl';
 import { withStyles } from "@material-ui/core/styles";
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
@@ -29,7 +29,12 @@ const Map = ({ classes }) => {
           onViewportChange={newViewport => setViewport(newViewport)}
           {...viewport}
         >
-
+          {/*Navigation Control*/}
+          <div className={classes.navigationControl}>
+            <NavigationControl
+                onViewportChange={newViewport => setViewport(newViewport)}
+            />
+          </div>
         </ReactMapGL>
       </div>
   );

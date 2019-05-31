@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import axios from 'axios';
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -10,6 +11,8 @@ import SaveIcon from "@material-ui/icons/SaveTwoTone";
 
 import Context from '../../context';
 
+import config from '../../config';
+
 const CreatePin = ({ classes }) => {
 
   const { dispatch } = useContext(Context);
@@ -20,12 +23,24 @@ const CreatePin = ({ classes }) => {
 
   const handleImageUpload = async () => {
 
+    const data = new FormData();
+
+    data.append('file', image);
+    data.append('upload_preset', config.CLOUDINARY_UPLOAD_PRESET);
+    data.append('cloud_name', config.CLOUDINARY_CLOUD_NAME);
+
+    const res = await axios.post(config.CLOUDINARY_CLOUD_UPLOAD_URL, data);
+
+    return res.data.url;
+
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log({ title, image, content });
+    const url = await handleImageUpload();
+
+    console.log({ title, image, url, content });
   };
 
   const handleDeleteDraft = () => {

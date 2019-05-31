@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from 'axios';
+import { GraphQLClient } from "graphql-request";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -10,16 +11,18 @@ import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 
 import Context from '../../context';
+import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
 
 import config from '../../config';
 
 const CreatePin = ({ classes }) => {
 
-  const { dispatch } = useContext(Context);
+  const { state, dispatch } = useContext(Context);
 
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
   const [content, setContent] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleImageUpload = async () => {
 
@@ -36,11 +39,39 @@ const CreatePin = ({ classes }) => {
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    try {
 
-    const url = await handleImageUpload();
+      event.preventDefault();
 
-    console.log({ title, image, url, content });
+      setSubmitting(true);
+
+      // получаем токен из апи гугла
+      // todo переделать на хранение токена чтоле
+      const idToken = window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
+
+      const clientGraphQL = new GraphQLClient(config.BACKEND_GRAPHQL_URL, {
+        headers: { authorization: idToken}
+      });
+
+      const url = await handleImageUpload();
+
+      const { latitude, longitude } = state.draft;
+
+      const variables = { title, image: url, content, latitude, longitude};
+
+      const data = await clientGraphQL.request(CREATE_PIN_MUTATION, variables);
+
+      const { createPin } = data;
+
+      console.log('Pin created', { createPin });
+
+      handleDeleteDraft();
+
+    } catch (error) {
+      setSubmitting(false);
+      console.error('Error creating pin', error);
+    }
+
   };
 
   const handleDeleteDraft = () => {
@@ -115,7 +146,7 @@ const CreatePin = ({ classes }) => {
               variant='contained'
               color='secondary'
               //проверка на заполненность полей
-              disabled={!title.trim() || !content.trim() || !image}
+              disabled={!title.trim() || !content.trim() || !image || submitting}
               onClick={handleSubmit}
           >
             <SaveIcon className={classes.rightIcon}/>

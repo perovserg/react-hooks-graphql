@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -8,7 +8,34 @@ import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 
+import Context from '../../context';
+
 const CreatePin = ({ classes }) => {
+
+  const { dispatch } = useContext(Context);
+
+  const [title, setTitle] = useState('');
+  const [image, setImage] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleImageUpload = async () => {
+
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    console.log({ title, image, content });
+  };
+
+  const handleDeleteDraft = () => {
+      setTitle('');
+      setImage('');
+      setContent('');
+
+      dispatch({ type: 'DELETE_DRAFT'});
+  };
+
   return (
       <form className={classes.form}>
         <Typography
@@ -25,15 +52,18 @@ const CreatePin = ({ classes }) => {
               name="title"
               label='Title'
               placeholder='Insert pin title'
+              onChange={event => setTitle(event.target.value)}
           />
           <input
             accept='image/*'
             id='image'
             type='file'
             className={classes.input}
+            onChange={event => setImage(event.target.files[0])}
           />
           <label htmlFor='image'>
             <Button
+                style={{ color: image && 'green'}}
                 component='span'
                 size='small'
                 className={classes.button}
@@ -51,6 +81,7 @@ const CreatePin = ({ classes }) => {
               margin='normal'
               fullWidth
               variant='outlined'
+              onChange={event => setContent(event.target.value)}
           />
         </div>
         <div>
@@ -58,6 +89,7 @@ const CreatePin = ({ classes }) => {
               className={classes.button}
               variant='contained'
               color='primary'
+              onClick={handleDeleteDraft}
           >
             <ClearIcon className={classes.leftIcon}/>
             Discard
@@ -67,6 +99,9 @@ const CreatePin = ({ classes }) => {
               className={classes.button}
               variant='contained'
               color='secondary'
+              //проверка на заполненность полей
+              disabled={!title.trim() || !content.trim() || !image}
+              onClick={handleSubmit}
           >
             <SaveIcon className={classes.rightIcon}/>
             Submit

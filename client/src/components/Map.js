@@ -70,9 +70,6 @@ const Map = ({ classes }) => {
 
   };
 
-  console.log('viewport', {...viewport});
-  console.log('userPosition', {...userPosition});
-
   return (
       <div className={classes.root}>
         <ReactMapGL

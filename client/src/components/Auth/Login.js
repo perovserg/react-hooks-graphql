@@ -9,6 +9,8 @@ import config from '../../config';
 import Context from '../../context';
 import { ME_QUERY } from "../../graphql/queries";
 
+import { BASE_URL } from "../../clientGraphQL";
+
 
 const Login = ({ classes }) => {
 
@@ -21,7 +23,8 @@ const Login = ({ classes }) => {
       // receive google token id for check it on our backend
       const idToken = googleUser.getAuthResponse().id_token;
 
-      const clientGraphQL = new GraphQLClient(config.BACKEND_GRAPHQL_URL, {
+      // тут новый клиент потому что хук useClient нужно вызывать в начале компонента Login, а там еще нет idToken
+      const clientGraphQL = new GraphQLClient(BASE_URL, {
         headers: { authorization: idToken }
       });
 

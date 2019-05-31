@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import axios from 'axios';
-import { GraphQLClient } from "graphql-request";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -11,11 +10,14 @@ import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 
 import Context from '../../context';
+import { useClient } from "../../clientGraphQL"; // custom hook !!!
 import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
 
 import config from '../../config';
 
 const CreatePin = ({ classes }) => {
+
+  const clientGraphQL = useClient();
 
   const { state, dispatch } = useContext(Context);
 
@@ -44,14 +46,6 @@ const CreatePin = ({ classes }) => {
       event.preventDefault();
 
       setSubmitting(true);
-
-      // получаем токен из апи гугла
-      // todo переделать на хранение токена чтоле
-      const idToken = window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token;
-
-      const clientGraphQL = new GraphQLClient(config.BACKEND_GRAPHQL_URL, {
-        headers: { authorization: idToken}
-      });
 
       const url = await handleImageUpload();
 

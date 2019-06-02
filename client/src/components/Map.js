@@ -10,6 +10,8 @@ import { withStyles } from "@material-ui/core/styles";
 import PinIcon from './PinIcon';
 import Blog from './Blog';
 
+import { useClient } from "../clientGraphQL";
+import { GET_PINS_QUERY } from "../graphql/queries";
 import Context from '../context';
 
 import config from '../config';
@@ -22,15 +24,16 @@ const initialViewport = {
 
 const Map = ({ classes }) => {
 
+  const clientGraphQL = useClient();
+
   const { state, dispatch } = useContext(Context);
 
-  const [viewport, setViewport] = useState(initialViewport);
+  useEffect(() => { getPins(); }, []);
 
+  const [viewport, setViewport] = useState(initialViewport);
   const [userPosition, setUserPosition] = useState(null);
 
-  useEffect(() => {
-    getUserPosition();
-  }, []);
+  useEffect(() => { getUserPosition(); }, []);
 
   const getUserPosition = () => {
 
@@ -50,6 +53,11 @@ const Map = ({ classes }) => {
           {enableHighAccuracy: true}
       );
     }
+  };
+
+  const getPins = async () => {
+    const { getPins } =  await clientGraphQL.request(GET_PINS_QUERY);
+    dispatch({ type: 'GET_PING', payload: getPins});
   };
 
   const handleMapClick = (event) => {
@@ -113,6 +121,20 @@ const Map = ({ classes }) => {
                 <PinIcon size={40} color="hotpink" />
               </Marker>
           )}
+
+          {/* Display here Created Pins*/}
+          {state.pins.map(pin => (
+              <Marker
+                  key={pin._id}
+                  latitude={pin.latitude}
+                  longitude={pin.longitude}
+                  offsetLeft={-19}
+                  offsetTop={-37}
+              >
+                <PinIcon size={40} color="darkblue" />
+              </Marker>
+          ))}
+
         </ReactMapGL>
 
         {/*Blog Area to add Pin Content*/}

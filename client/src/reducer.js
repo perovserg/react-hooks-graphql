@@ -42,6 +42,12 @@ export default function reducer(state, { type, payload}) {
                 draft: null,
             };
 
+        case 'GET_PING':
+            return {
+                ...state,
+                pins: payload,
+            };
+
         default:
             return state;
     }

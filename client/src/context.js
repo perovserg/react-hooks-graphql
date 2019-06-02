@@ -5,6 +5,7 @@ const appContext = createContext({
     isAuth: false,
     draft: null,
     pins: [],
+    currentPin: null,
 });
 
 export default appContext;

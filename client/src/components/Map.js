@@ -14,6 +14,7 @@ import Blog from './Blog';
 
 import { useClient } from "../clientGraphQL";
 import { GET_PINS_QUERY } from "../graphql/queries";
+import { DELETE_PIN_MUTATION } from "../graphql/mutations";
 import Context from '../context';
 
 import config from '../config';
@@ -93,6 +94,13 @@ const Map = ({ classes }) => {
   };
 
   const isAuthorUser = () => state.currentUser._id === popup.author._id;
+
+  const handleDeletePin = async (pin) => {
+      const variables = { pinId: pin._id };
+      const { deletePin } = await clientGraphQL.request(DELETE_PIN_MUTATION, variables);
+      dispatch({ type: 'DELETE_PIN', payload: deletePin });
+      setPopup(null);
+  };
 
   return (
       <div className={classes.root}>
@@ -174,7 +182,7 @@ const Map = ({ classes }) => {
                     {popup.latitude.toFixed(6)}, {popup.longitude.toFixed(6)}
                   </Typography>
                   {isAuthorUser() && (
-                    <Button>
+                    <Button onClick={() => handleDeletePin(popup)}>
                       <DeleteIcon className={classes.deleteIcon}/>
                     </Button>
                   )}

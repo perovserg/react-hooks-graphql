@@ -57,7 +57,7 @@ const CreatePin = ({ classes }) => {
 
       const { createPin } = data;
 
-      console.log('Pin created', { createPin });
+      dispatch({ type: 'CREATE_PIN', payload: createPin});
 
       handleDeleteDraft();
 

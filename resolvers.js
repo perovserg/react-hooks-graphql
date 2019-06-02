@@ -12,6 +12,13 @@ const authenticated = next => (root, args, ctx, info) => {
 const resolvers = {
     Query: {
         me: authenticated((root, args, ctx) => ctx.currentUser),
+        getPins: async (root, args, ctx) => {
+            // .find({}) - вытаскиваем всю таблицу Pin т.к. без фильтра
+            // .populate('author') - заполняем поле автор в каждом pin
+            // .populate('comments.author') - заполняем автора у каждого комметрария в каждом pin
+            const pins = await Pin.find({}).populate('author').populate('comments.author');
+            return pins;
+        }
     },
     Mutation: {
         // оборачиваем функцией authenticated() что бы был доступен currentUser внутри анонимной функции.

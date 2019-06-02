@@ -36,6 +36,7 @@ const typeDefs = gql`
     
     type Query {
         me: User
+        getPins: [Pin!]!
     }
     
     type Mutation {
@@ -44,3 +45,5 @@ const typeDefs = gql`
 `;
 
 export default typeDefs;
+
+// [Pin!]! => Pin! - элемент внутри массива не равен null => []! - должен вернуть не пустой массив

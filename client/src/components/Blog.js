@@ -6,23 +6,22 @@ import Context from '../context';
 
 import NoContent from './Pin/NoContent';
 import CreatePin from './Pin/CreatePin';
+import PinContent from './Pin/PinContent';
 
 const Blog = ({ classes }) => {
 
   const { state } = useContext(Context);
-  const { draft } = state;
+  const { draft, currentPin } = state;
 
-  let BlogContent;
-
-  if (!draft) {
-    BlogContent = NoContent;
-  } else if (draft) {
-    BlogContent = CreatePin;
-  }
+  const getBlogContent = () => {
+    if (!draft && !currentPin) return <NoContent/>;
+    if (draft && !currentPin) return <CreatePin/>;
+    if (!draft && currentPin) return <PinContent/>;
+  };
 
   return (
       <Paper className={classes.root}>
-        <BlogContent/>
+        {getBlogContent()}
       </Paper>
   );
 };

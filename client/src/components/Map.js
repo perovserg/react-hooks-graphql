@@ -47,6 +47,15 @@ const Map = ({ classes }) => {
   useEffect(() => { getUserPosition(); }, []);
 
   const [popup, setPopup] = useState(null);
+  // remove popup if pin itself is deleted by the author of pin
+  useEffect(() => {
+      const pinExist = popup && state.pins.findIndex(pin => pin._id === popup._id) > -1;
+
+      if (!pinExist) setPopup(null);
+
+  }, [state.pins.length]);
+  // будет вызываться при изменении [state.pins.length]
+  // если этот массив пустой сраблтает только при componentDidMount
 
   const getUserPosition = () => {
 

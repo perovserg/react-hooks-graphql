@@ -53,11 +53,7 @@ const CreatePin = ({ classes }) => {
 
       const variables = { title, image: url, content, latitude, longitude};
 
-      const data = await clientGraphQL.request(CREATE_PIN_MUTATION, variables);
-
-      const { createPin } = data;
-
-      dispatch({ type: 'CREATE_PIN', payload: createPin});
+      await clientGraphQL.request(CREATE_PIN_MUTATION, variables);
 
       handleDeleteDraft();
 

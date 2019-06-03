@@ -38,19 +38,19 @@ const resolvers = {
             return pinAdded;
         }),
         deletePin: authenticated(async (root, args, ctx) => {
-            const pineDeleted = await Pin.findOneAndDelete({ _id: args.pinId }).exec();
-            pubsub.publish(PIN_DELETED, { pineDeleted });
-            return pineDeleted;
+            const pinDeleted = await Pin.findOneAndDelete({ _id: args.pinId }).exec();
+            pubsub.publish(PIN_DELETED, { pinDeleted });
+            return pinDeleted;
         }),
         createComment: authenticated(async (root, args, ctx) => {
             const newComment = { text: args.text, author: ctx.currentUser._id };
-            const updatedPin = await Pin.findOneAndUpdate(
+            const pinUpdated = await Pin.findOneAndUpdate(
                 { _id: args.pinId }, // фильтр для поиска
                 { $push: { comments: newComment } }, // как изменять
                 { new: true } // вернуть новый объект
             ).populate('author').populate('comments.author');
-            pubsub.publish(PIN_UPDATED, { updatedPin });
-            return updatedPin;
+            pubsub.publish(PIN_UPDATED, { pinUpdated });
+            return pinUpdated;
         }),
     },
     Subscription: {

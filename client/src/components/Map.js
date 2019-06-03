@@ -10,6 +10,9 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 
+// сторонний хук из библиотеки
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
+
 import PinIcon from './PinIcon';
 import Blog from './Blog';
 
@@ -28,6 +31,9 @@ const initialViewport = {
 };
 
 const Map = ({ classes }) => {
+
+  // hook returns true when condition is true
+  const mobileSize = useMediaQuery('(max-width: 650px)');
 
   const clientGraphQL = useClient();
 
@@ -104,8 +110,9 @@ const Map = ({ classes }) => {
   };
 
   return (
-      <div className={classes.root}>
+      <div className={mobileSize ? classes.rootMobile : classes.root}>
         <ReactMapGL
+          scrollZoom={!mobileSize}
           onClick={handleMapClick}
           width="100vw"
           height="calc(100vh - 64px)"

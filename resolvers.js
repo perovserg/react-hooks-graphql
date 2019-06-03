@@ -34,6 +34,15 @@ const resolvers = {
             const pineDeleted = await Pin.findOneAndDelete({ _id: args.pinId }).exec();
             return pineDeleted;
         }),
+        createComment: authenticated(async (root, args, ctx) => {
+            const newComment = { text: args.text, author: ctx.currentUser._id };
+            const updatedPin = await Pin.findOneAndUpdate(
+                { _id: args.pinId }, // фильтр для поиска
+                { $push: { comments: newComment } }, // как изменять
+                { new: true } // вернуть новый объект
+            ).populate('author').populate('comments.author');
+            return updatedPin;
+        }),
     },
 };
 
